@@ -27,4 +27,4 @@ jobs:
           context: .
           file: ./dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/telco-churn-api:latest
+          tags: kunalkp22/telco-churn-api:latest
