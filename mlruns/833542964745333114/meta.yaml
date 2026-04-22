@@ -1,0 +1,7 @@
+artifact_location: file:///c:/Users/Kunal/Music/ML/churML/mlruns/833542964745333114
+creation_time: 1776796557554
+experiment_id: '833542964745333114'
+last_update_time: 1776796557554
+lifecycle_stage: active
+name: Telco Churn - XGBoost
+workspace: default

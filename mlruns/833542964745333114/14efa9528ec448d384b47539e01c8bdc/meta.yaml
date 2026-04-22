@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/Users/Kunal/Music/ML/churML/mlruns/833542964745333114/14efa9528ec448d384b47539e01c8bdc/artifacts
+end_time: 1776889707683
+entry_point_name: ''
+experiment_id: '833542964745333114'
+lifecycle_stage: active
+run_id: 14efa9528ec448d384b47539e01c8bdc
+run_name: full_pipeline_xgboost
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1776889700444
+status: 3
+tags: []
+user_id: Kunal

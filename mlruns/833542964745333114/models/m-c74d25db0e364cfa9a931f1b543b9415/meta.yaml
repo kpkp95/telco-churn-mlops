@@ -1,0 +1,10 @@
+artifact_location: file:///c:/Users/Kunal/Music/ML/churML/mlruns/833542964745333114/models/m-c74d25db0e364cfa9a931f1b543b9415/artifacts
+creation_timestamp: 1776889700665
+experiment_id: '833542964745333114'
+last_updated_timestamp: 1776889707667
+model_id: m-c74d25db0e364cfa9a931f1b543b9415
+model_type: null
+name: model
+source_run_id: 14efa9528ec448d384b47539e01c8bdc
+status: 2
+status_message: null
