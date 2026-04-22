@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+
+mlruns/
+data/raw/
+data/processed/
+
+.ipynb_checkpoints/
+.pytest_cache/
