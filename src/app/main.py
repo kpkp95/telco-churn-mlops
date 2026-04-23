@@ -1,13 +1,3 @@
-"""
-FASTAPI + GRADIO SERVING APPLICATION
-====================================
-
-This application serves the Telco Customer Churn model using:
-- FastAPI for REST API access
-- Gradio for a simple web interface
-- Pydantic for request validation
-"""
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 import gradio as gr
@@ -110,14 +100,39 @@ def gradio_interface(
     )
 
 
-with gr.Blocks(title="Telco Customer Churn Predictor") as demo:
-    gr.Markdown("# Telco Customer Churn Predictor")
+with gr.Blocks(
+    title="Telco Customer Churn Predictor",
+    css="""
+    .gradio-container {
+        max-width: 1150px !important;
+        margin: 0 auto !important;
+        padding-top: 10px !important;
+    }
+
+    h1 {
+        font-size: 30px !important;
+        margin-bottom: 6px !important;
+        text-align: center;
+    }
+
+    .small-desc {
+        font-size: 14px;
+        color: #cfcfcf;
+        max-width: 900px;
+        margin: 0 auto 18px auto;
+        text-align: center;
+        line-height: 1.5;
+    }
+    """
+) as demo:
     gr.Markdown(
         """
-        Predict whether a telecom customer is likely to churn.
-
-        The model returns a churn probability and classifies the customer as likely to churn
-        if the probability is greater than or equal to the selected threshold.
+        <h1>Telco Customer Churn Predictor</h1>
+        <div class="small-desc">
+            Enter a customer’s telecom service and billing details to estimate churn risk.
+            The model returns a churn probability and flags the customer as likely to churn
+            when the predicted probability is greater than or equal to the decision threshold.
+        </div>
         """
     )
 
@@ -194,10 +209,10 @@ with gr.Blocks(title="Telco Customer Churn Predictor") as demo:
             total_charges = gr.Number(label="Total Charges", value=85.0, minimum=0, maximum=10000)
 
     with gr.Row():
-        clear_btn = gr.Button("Clear")
-        submit_btn = gr.Button("Submit", variant="primary")
+        clear_btn = gr.Button("Clear", scale=1)
+        submit_btn = gr.Button("Submit", variant="primary", scale=1)
 
-    output_box = gr.Textbox(label="Churn Prediction", lines=4)
+    output_box = gr.Textbox(label="Churn Prediction", lines=3)
 
     gr.Examples(
         examples=[
