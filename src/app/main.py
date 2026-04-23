@@ -24,17 +24,10 @@ app = FastAPI(
 
 @app.get("/")
 def root():
-    """
-    Health check endpoint.
-    """
     return {"status": "ok"}
 
 
 class CustomerData(BaseModel):
-    """
-    Customer input data for churn prediction.
-    """
-
     gender: str
     Partner: str
     Dependents: str
@@ -61,14 +54,8 @@ class CustomerData(BaseModel):
 
 @app.post("/predict")
 def get_prediction(data: CustomerData):
-    """
-    Predict whether a customer is likely to churn.
-    """
-
     try:
-        result = predict(data.model_dump())
-        return result
-
+        return predict(data.model_dump())
     except Exception as e:
         return {"error": str(e)}
 
@@ -93,10 +80,6 @@ def gradio_interface(
     MonthlyCharges,
     TotalCharges,
 ):
-    """
-    Gradio UI function.
-    """
-
     data = {
         "gender": gender,
         "Partner": Partner,
@@ -127,63 +110,200 @@ def gradio_interface(
     )
 
 
-demo = gr.Interface(
-    fn=gradio_interface,
-    inputs=[
-        gr.Dropdown(["Male", "Female"], label="Gender", value="Male"),
-        gr.Dropdown(["Yes", "No"], label="Partner", value="No"),
-        gr.Dropdown(["Yes", "No"], label="Dependents", value="No"),
+with gr.Blocks(title="Telco Customer Churn Predictor") as demo:
+    gr.Markdown("# Telco Customer Churn Predictor")
+    gr.Markdown(
+        """
+        Predict whether a telecom customer is likely to churn.
 
-        gr.Dropdown(["Yes", "No"], label="Phone Service", value="Yes"),
-        gr.Dropdown(["Yes", "No", "No phone service"], label="Multiple Lines", value="No"),
+        The model returns a churn probability and classifies the customer as likely to churn
+        if the probability is greater than or equal to the selected threshold.
+        """
+    )
 
-        gr.Dropdown(["DSL", "Fiber optic", "No"], label="Internet Service", value="Fiber optic"),
-        gr.Dropdown(["Yes", "No", "No internet service"], label="Online Security", value="No"),
-        gr.Dropdown(["Yes", "No", "No internet service"], label="Online Backup", value="No"),
-        gr.Dropdown(["Yes", "No", "No internet service"], label="Device Protection", value="No"),
-        gr.Dropdown(["Yes", "No", "No internet service"], label="Tech Support", value="No"),
-        gr.Dropdown(["Yes", "No", "No internet service"], label="Streaming TV", value="Yes"),
-        gr.Dropdown(["Yes", "No", "No internet service"], label="Streaming Movies", value="Yes"),
+    with gr.Row():
+        with gr.Column():
+            gender = gr.Dropdown(["Male", "Female"], label="Gender", value="Male")
+            partner = gr.Dropdown(["Yes", "No"], label="Partner", value="No")
+            dependents = gr.Dropdown(["Yes", "No"], label="Dependents", value="No")
+            phone_service = gr.Dropdown(["Yes", "No"], label="Phone Service", value="Yes")
+            multiple_lines = gr.Dropdown(
+                ["Yes", "No", "No phone service"],
+                label="Multiple Lines",
+                value="No",
+            )
+            internet_service = gr.Dropdown(
+                ["DSL", "Fiber optic", "No"],
+                label="Internet Service",
+                value="Fiber optic",
+            )
+            online_security = gr.Dropdown(
+                ["Yes", "No", "No internet service"],
+                label="Online Security",
+                value="No",
+            )
+            online_backup = gr.Dropdown(
+                ["Yes", "No", "No internet service"],
+                label="Online Backup",
+                value="No",
+            )
+            device_protection = gr.Dropdown(
+                ["Yes", "No", "No internet service"],
+                label="Device Protection",
+                value="No",
+            )
 
-        gr.Dropdown(["Month-to-month", "One year", "Two year"], label="Contract", value="Month-to-month"),
-        gr.Dropdown(["Yes", "No"], label="Paperless Billing", value="Yes"),
-        gr.Dropdown(
+        with gr.Column():
+            tech_support = gr.Dropdown(
+                ["Yes", "No", "No internet service"],
+                label="Tech Support",
+                value="No",
+            )
+            streaming_tv = gr.Dropdown(
+                ["Yes", "No", "No internet service"],
+                label="Streaming TV",
+                value="Yes",
+            )
+            streaming_movies = gr.Dropdown(
+                ["Yes", "No", "No internet service"],
+                label="Streaming Movies",
+                value="Yes",
+            )
+            contract = gr.Dropdown(
+                ["Month-to-month", "One year", "Two year"],
+                label="Contract",
+                value="Month-to-month",
+            )
+            paperless_billing = gr.Dropdown(
+                ["Yes", "No"],
+                label="Paperless Billing",
+                value="Yes",
+            )
+            payment_method = gr.Dropdown(
+                [
+                    "Electronic check",
+                    "Mailed check",
+                    "Bank transfer (automatic)",
+                    "Credit card (automatic)",
+                ],
+                label="Payment Method",
+                value="Electronic check",
+            )
+            tenure = gr.Number(label="Tenure Months", value=1, minimum=0, maximum=100)
+            monthly_charges = gr.Number(label="Monthly Charges", value=85.0, minimum=0, maximum=200)
+            total_charges = gr.Number(label="Total Charges", value=85.0, minimum=0, maximum=10000)
+
+    with gr.Row():
+        clear_btn = gr.Button("Clear")
+        submit_btn = gr.Button("Submit", variant="primary")
+
+    output_box = gr.Textbox(label="Churn Prediction", lines=4)
+
+    gr.Examples(
+        examples=[
             [
-                "Electronic check",
-                "Mailed check",
-                "Bank transfer (automatic)",
-                "Credit card (automatic)",
+                "Female", "No", "No", "Yes", "No", "Fiber optic", "No", "No", "No",
+                "No", "Yes", "Yes", "Month-to-month", "Yes", "Electronic check",
+                1, 85.0, 85.0,
             ],
-            label="Payment Method",
-            value="Electronic check",
-        ),
-
-        gr.Number(label="Tenure Months", value=1, minimum=0, maximum=100),
-        gr.Number(label="Monthly Charges", value=85.0, minimum=0, maximum=200),
-        gr.Number(label="Total Charges", value=85.0, minimum=0, maximum=10000),
-    ],
-    outputs=gr.Textbox(label="Churn Prediction", lines=4),
-    title="Telco Customer Churn Predictor",
-    description="""
-    Predict whether a telecom customer is likely to churn.
-
-    The model returns a churn probability and classifies the customer as likely to churn
-    if the probability is greater than or equal to the selected threshold.
-    """,
-    examples=[
-        [
-            "Female", "No", "No", "Yes", "No", "Fiber optic", "No", "No", "No",
-            "No", "Yes", "Yes", "Month-to-month", "Yes", "Electronic check",
-            1, 85.0, 85.0,
+            [
+                "Male", "Yes", "Yes", "Yes", "Yes", "DSL", "Yes", "Yes", "Yes",
+                "Yes", "No", "No", "Two year", "No", "Credit card (automatic)",
+                60, 45.0, 2700.0,
+            ],
         ],
-        [
-            "Male", "Yes", "Yes", "Yes", "Yes", "DSL", "Yes", "Yes", "Yes",
-            "Yes", "No", "No", "Two year", "No", "Credit card (automatic)",
-            60, 45.0, 2700.0,
+        inputs=[
+            gender,
+            partner,
+            dependents,
+            phone_service,
+            multiple_lines,
+            internet_service,
+            online_security,
+            online_backup,
+            device_protection,
+            tech_support,
+            streaming_tv,
+            streaming_movies,
+            contract,
+            paperless_billing,
+            payment_method,
+            tenure,
+            monthly_charges,
+            total_charges,
         ],
-    ],
-    theme=gr.themes.Soft(),
-)
+    )
+
+    submit_btn.click(
+        fn=gradio_interface,
+        inputs=[
+            gender,
+            partner,
+            dependents,
+            phone_service,
+            multiple_lines,
+            internet_service,
+            online_security,
+            online_backup,
+            device_protection,
+            tech_support,
+            streaming_tv,
+            streaming_movies,
+            contract,
+            paperless_billing,
+            payment_method,
+            tenure,
+            monthly_charges,
+            total_charges,
+        ],
+        outputs=output_box,
+    )
+
+    clear_btn.click(
+        fn=lambda: [
+            "Male",
+            "No",
+            "No",
+            "Yes",
+            "No",
+            "Fiber optic",
+            "No",
+            "No",
+            "No",
+            "No",
+            "Yes",
+            "Yes",
+            "Month-to-month",
+            "Yes",
+            "Electronic check",
+            1,
+            85.0,
+            85.0,
+            "",
+        ],
+        inputs=[],
+        outputs=[
+            gender,
+            partner,
+            dependents,
+            phone_service,
+            multiple_lines,
+            internet_service,
+            online_security,
+            online_backup,
+            device_protection,
+            tech_support,
+            streaming_tv,
+            streaming_movies,
+            contract,
+            paperless_billing,
+            payment_method,
+            tenure,
+            monthly_charges,
+            total_charges,
+            output_box,
+        ],
+    )
 
 
 app = gr.mount_gradio_app(
